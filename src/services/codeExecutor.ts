@@ -4,6 +4,10 @@ interface ExecutionResult {
   executionTime: number;
 }
 
+/**
+ * CodeExecutor service handles the execution of code in different programming languages.
+ * Currently supports Python execution using Pyodide, with placeholders for C++ and Java.
+ */
 export class CodeExecutor {
   private static async executePython(code: string, input: string): Promise<ExecutionResult> {
     try {
