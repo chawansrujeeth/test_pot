@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -51,7 +50,7 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
     if (!code.trim()) {
       toast({
         title: "No code to test! 🤔",
-        description: "Please write some code or upload a file first.",
+        description: "Please upload a file first.",
         variant: "destructive"
       });
       return;
@@ -63,7 +62,7 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
     if (!code.trim()) {
       toast({
         title: "No code to save! 📝",
-        description: "Please write some code first.",
+        description: "Please upload a file first.",
         variant: "destructive"
       });
       return;
@@ -91,7 +90,7 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
           <div className="bg-gradient-to-r from-cartoon-green-400 to-cartoon-blue-400 p-2 rounded-lg">
             <span className="text-white text-sm">💻</span>
           </div>
-          Code Editor
+          Code Submission
           {fileName && (
             <span className="text-sm text-gray-600 ml-auto">📁 {fileName}</span>
           )}
@@ -134,13 +133,6 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
             />
           )}
         </div>
-        
-        <textarea
-          placeholder={`Write your ${language} code here or upload a file above... 🚀`}
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          className="w-full h-64 p-4 rounded-xl border border-cartoon-blue-200 focus:outline-none focus:ring-2 focus:ring-cartoon-blue-400 font-mono text-sm bg-gray-50"
-        />
         
         <div className="flex flex-col sm:flex-row gap-3">
           {onTest && (

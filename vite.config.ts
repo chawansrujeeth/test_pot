@@ -19,4 +19,16 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: ['pyodide']
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          pyodide: ['pyodide']
+        }
+      }
+    }
+  }
 }));

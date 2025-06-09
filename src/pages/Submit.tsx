@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -6,6 +5,7 @@ import CodeEditor from "@/components/CodeEditor";
 import TestCaseManager from "@/components/TestCaseManager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CodeExecutor } from "@/services/codeExecutor";
 
 interface TestResult {
   testCase: number;
@@ -13,6 +13,8 @@ interface TestResult {
   expectedOutput: string;
   actualOutput: string;
   passed: boolean;
+  executionTime: number;
+  error: string | null;
 }
 
 interface TestCase {
@@ -34,25 +36,22 @@ const Submit = () => {
     setIsRunning(true);
     setTestResults([]);
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
     const results: TestResult[] = [];
 
-    testCases.forEach((testCase, index) => {
-      // Simple mock logic - checks if code contains basic addition logic
-      const hasAddition = code.includes("+") || code.includes("add") || code.includes("sum");
-      const inputNumbers = testCase.input.split(/\s+|\n/).map(Number).filter(n => !isNaN(n));
-      const expectedSum = inputNumbers.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < testCases.length; i++) {
+      const testCase = testCases[i];
+      const result = await CodeExecutor.executeCode(code, language, testCase.input);
       
       results.push({
-        testCase: index + 1,
+        testCase: i + 1,
         input: testCase.input,
         expectedOutput: testCase.expectedOutput,
-        actualOutput: hasAddition ? expectedSum.toString() : "Error: No addition logic found",
-        passed: hasAddition && expectedSum.toString() === testCase.expectedOutput
+        actualOutput: result.error ? `Error: ${result.error}` : result.output,
+        passed: !result.error && result.output.trim() === testCase.expectedOutput.trim(),
+        executionTime: result.executionTime,
+        error: result.error
       });
-    });
+    }
 
     setTestResults(results);
     setIsRunning(false);
@@ -71,7 +70,7 @@ const Submit = () => {
             Submit & Test Your Code 🎯
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Upload your code file or write directly in the editor, manage test cases, and get instant feedback! 
+            Upload your code file, manage test cases, and get instant feedback! 
             Perfect for practicing algorithms and debugging your solutions.
           </p>
         </div>
@@ -138,14 +137,24 @@ const Submit = () => {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-semibold">Test Case {result.testCase}</h4>
-                          <Badge className={result.passed ? "bg-cartoon-green-500" : "bg-red-500"}>
-                            {result.passed ? "✅ Passed" : "❌ Failed"}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500">
+                              {result.executionTime.toFixed(2)}ms
+                            </span>
+                            <Badge className={result.passed ? "bg-cartoon-green-500" : "bg-red-500"}>
+                              {result.passed ? "✅ Passed" : "❌ Failed"}
+                            </Badge>
+                          </div>
                         </div>
                         <div className="text-sm space-y-1">
                           <p><span className="font-medium">Input:</span> <code className="bg-gray-100 px-1 rounded">{result.input}</code></p>
                           <p><span className="font-medium">Expected Output:</span> <code className="bg-gray-100 px-1 rounded">{result.expectedOutput}</code></p>
                           <p><span className="font-medium">Your Output:</span> <code className={`px-1 rounded ${result.passed ? "bg-green-100" : "bg-red-100"}`}>{result.actualOutput}</code></p>
+                          {result.error && (
+                            <p className="text-red-500 mt-2">
+                              <span className="font-medium">Error:</span> {result.error}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ))}
