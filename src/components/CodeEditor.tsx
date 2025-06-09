@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Play, Save } from "lucide-react";
+import { Play, Save, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 interface CodeEditorProps {
   onSave?: (code: string, language: string, name: string) => void;
@@ -15,13 +16,42 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
   const [codeName, setCodeName] = useState("");
+  const [fileName, setFileName] = useState("");
   const { toast } = useToast();
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setCode(content);
+      setFileName(file.name);
+      
+      // Auto-detect language from file extension
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      if (extension === 'py') {
+        setLanguage('python');
+      } else if (extension === 'cpp' || extension === 'cc' || extension === 'cxx') {
+        setLanguage('cpp');
+      } else if (extension === 'java') {
+        setLanguage('java');
+      }
+
+      toast({
+        title: "File uploaded! 📁",
+        description: `Successfully loaded ${file.name}`
+      });
+    };
+    reader.readAsText(file);
+  };
 
   const handleTest = () => {
     if (!code.trim()) {
       toast({
         title: "No code to test! 🤔",
-        description: "Please write some code first.",
+        description: "Please write some code or upload a file first.",
         variant: "destructive"
       });
       return;
@@ -62,9 +92,26 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
             <span className="text-white text-sm">💻</span>
           </div>
           Code Editor
+          {fileName && (
+            <span className="text-sm text-gray-600 ml-auto">📁 {fileName}</span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* File Upload Section */}
+        <div className="p-4 border-2 border-dashed border-cartoon-blue-200 rounded-xl">
+          <div className="text-center">
+            <Upload className="mx-auto h-8 w-8 text-cartoon-blue-400 mb-2" />
+            <p className="text-sm text-gray-600 mb-3">Upload your code file (.py, .cpp, .java)</p>
+            <Input
+              type="file"
+              accept=".py,.cpp,.cc,.cxx,.java"
+              onChange={handleFileUpload}
+              className="cursor-pointer"
+            />
+          </div>
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-4">
           <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger className="w-full sm:w-48 rounded-xl">
@@ -89,7 +136,7 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
         </div>
         
         <textarea
-          placeholder={`Write your ${language} code here... 🚀`}
+          placeholder={`Write your ${language} code here or upload a file above... 🚀`}
           value={code}
           onChange={(e) => setCode(e.target.value)}
           className="w-full h-64 p-4 rounded-xl border border-cartoon-blue-200 focus:outline-none focus:ring-2 focus:ring-cartoon-blue-400 font-mono text-sm bg-gray-50"
