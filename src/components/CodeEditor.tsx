@@ -18,12 +18,12 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
   const [fileName, setFileName] = useState("");
   const { toast } = useToast();
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+  reader.onload = (e) => {
       const content = e.target?.result as string;
       setCode(content);
       setFileName(file.name);
@@ -46,7 +46,7 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
     reader.readAsText(file);
   };
 
-  const handleTest = () => {
+  const onTestClick = () => {
     if (!code.trim()) {
       toast({
         title: "No code to test! 🤔",
@@ -55,10 +55,10 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
       });
       return;
     }
-    onTest?.(code, language);
+  onTest?.(code, language);
   };
 
-  const handleSave = () => {
+  const onSaveClick = () => {
     if (!code.trim()) {
       toast({
         title: "No code to save! 📝",
@@ -75,48 +75,48 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
       });
       return;
     }
-    onSave?.(code, language, codeName);
-    setCodeName("");
-    toast({
-      title: "Code saved! ✨",
-      description: `Your ${language} code "${codeName}" has been saved successfully.`
-    });
-  };
-
-  return (
-    <Card className="cartoon-card">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className="bg-gradient-to-r from-cartoon-green-400 to-cartoon-blue-400 p-2 rounded-lg">
-            <span className="text-white text-sm">💻</span>
-          </div>
-          Code Submission
-          {fileName && (
-            <span className="text-sm text-gray-600 ml-auto">📁 {fileName}</span>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* File Upload Section */}
-        <div className="p-4 border-2 border-dashed border-cartoon-blue-200 rounded-xl">
-          <div className="text-center">
-            <Upload className="mx-auto h-8 w-8 text-cartoon-blue-400 mb-2" />
-            <p className="text-sm text-gray-600 mb-3">Upload your code file (.py, .cpp, .java)</p>
+  onSave?.(code, language, codeName);
+    return (
+      <Card className="w-full max-w-3xl mx-auto">
+        <CardHeader>
+          <CardTitle>Code Editor</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <Input type="file" accept=".py,.cpp,.cc,.cxx,.java" onChange={onFileUpload} />
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="python">Python</SelectItem>
+                <SelectItem value="cpp">C++</SelectItem>
+                <SelectItem value="java">Java</SelectItem>
+              </SelectContent>
+            </Select>
             <Input
-              type="file"
-              accept=".py,.cpp,.cc,.cxx,.java"
-              onChange={handleFileUpload}
-              className="cursor-pointer"
+              placeholder="Enter code name (for saving)"
+              value={codeName}
+              onChange={(e) => setCodeName(e.target.value)}
             />
+            <textarea
+              className="w-full h-64 p-2 border rounded"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Write or upload your code here..."
+            />
+            <div className="flex gap-2">
+              <Button onClick={onTestClick} variant="default">
+                <Play className="w-4 h-4 mr-2" /> Test
+              </Button>
+              <Button onClick={onSaveClick} variant="secondary">
+                <Save className="w-4 h-4 mr-2" /> Save
+              </Button>
+            </div>
           </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-full sm:w-48 rounded-xl">
-              <SelectValue placeholder="Select Language" />
-            </SelectTrigger>
-            <SelectContent>
+        </CardContent>
+      </Card>
+    );
               <SelectItem value="python">🐍 Python</SelectItem>
               <SelectItem value="cpp">⚡ C++</SelectItem>
               <SelectItem value="java">☕ Java</SelectItem>

@@ -1,114 +1,126 @@
-interface ExecutionResult {
-  output: string;
-  error: string | null;
-  executionTime: number;
+
+interface RunResult {
+  result: string;
+  err: string | null;
+  timeMs: number;
 }
 
 /**
- * CodeExecutor service handles the execution of code in different programming languages.
- * Currently supports Python execution using Pyodide, with placeholders for C++ and Java.
+ * CodeExecutorService handles the execution of code in different programming languages.
+ * - Python: Uses Pyodide in a web worker for safe, in-browser execution.
+ * - C++/Java: Placeholder workers for future support.
+ *
+ * Usage:
+ *   await CodeExecutorService.run(source, lang, stdin);
  */
-export class CodeExecutor {
-  private static async executePython(code: string, input: string): Promise<ExecutionResult> {
+export class CodeExecutorService {
+  /**
+   * Execute Python code using a Pyodide web worker.
+   * @param source Python source code
+   * @param stdin Input string for the code
+   * @returns RunResult with output, error, and execution time
+   */
+  private static async runPython(source: string, stdin: string): Promise<RunResult> {
     try {
       const startTime = performance.now();
-      
-      // Create a worker to execute Python code
-      const worker = new Worker(new URL('../workers/pythonWorker.ts', import.meta.url));
-      
+      const pyWorker = new Worker(new URL('../workers/pythonWorker.ts', import.meta.url));
       return new Promise((resolve) => {
-        worker.onmessage = (e) => {
+        pyWorker.onmessage = (e) => {
           const endTime = performance.now();
           resolve({
-            output: e.data.output,
-            error: e.data.error,
-            executionTime: endTime - startTime
+            result: e.data.output,
+            err: e.data.error,
+            timeMs: endTime - startTime
           });
-          worker.terminate();
+          pyWorker.terminate();
         };
-        
-        worker.postMessage({ code, input });
+        pyWorker.postMessage({ code: source, input: stdin });
       });
     } catch (error) {
       return {
-        output: '',
-        error: 'Failed to execute Python code',
-        executionTime: 0
+        result: '',
+        err: 'Failed to run Python code',
+        timeMs: 0
       };
     }
   }
 
-  private static async executeCpp(code: string, input: string): Promise<ExecutionResult> {
+  /**
+   * Placeholder for C++ code execution using a web worker.
+   */
+  private static async runCpp(source: string, stdin: string): Promise<RunResult> {
     try {
       const startTime = performance.now();
-      
-      // Create a worker to execute C++ code
-      const worker = new Worker(new URL('../workers/cppWorker.ts', import.meta.url));
-      
+      const cppWorker = new Worker(new URL('../workers/cppWorker.ts', import.meta.url));
       return new Promise((resolve) => {
-        worker.onmessage = (e) => {
+        cppWorker.onmessage = (e) => {
           const endTime = performance.now();
           resolve({
-            output: e.data.output,
-            error: e.data.error,
-            executionTime: endTime - startTime
+            result: e.data.output,
+            err: e.data.error,
+            timeMs: endTime - startTime
           });
-          worker.terminate();
+          cppWorker.terminate();
         };
-        
-        worker.postMessage({ code, input });
+        cppWorker.postMessage({ code: source, input: stdin });
       });
     } catch (error) {
       return {
-        output: '',
-        error: 'Failed to execute C++ code',
-        executionTime: 0
+        result: '',
+        err: 'Failed to run C++ code',
+        timeMs: 0
       };
     }
   }
 
-  private static async executeJava(code: string, input: string): Promise<ExecutionResult> {
+  /**
+   * Placeholder for Java code execution using a web worker.
+   */
+  private static async runJava(source: string, stdin: string): Promise<RunResult> {
     try {
       const startTime = performance.now();
-      
-      // Create a worker to execute Java code
-      const worker = new Worker(new URL('../workers/javaWorker.ts', import.meta.url));
-      
+      const javaWorker = new Worker(new URL('../workers/javaWorker.ts', import.meta.url));
       return new Promise((resolve) => {
-        worker.onmessage = (e) => {
+        javaWorker.onmessage = (e) => {
           const endTime = performance.now();
           resolve({
-            output: e.data.output,
-            error: e.data.error,
-            executionTime: endTime - startTime
+            result: e.data.output,
+            err: e.data.error,
+            timeMs: endTime - startTime
           });
-          worker.terminate();
+          javaWorker.terminate();
         };
-        
-        worker.postMessage({ code, input });
+        javaWorker.postMessage({ code: source, input: stdin });
       });
     } catch (error) {
       return {
-        output: '',
-        error: 'Failed to execute Java code',
-        executionTime: 0
+        result: '',
+        err: 'Failed to run Java code',
+        timeMs: 0
       };
     }
   }
 
-  public static async executeCode(code: string, language: string, input: string): Promise<ExecutionResult> {
-    switch (language.toLowerCase()) {
+  /**
+   * Run code in the specified language.
+   * @param source Source code
+   * @param lang Language identifier (python, cpp, java)
+   * @param stdin Input string
+   * @returns RunResult
+   */
+  public static async run(source: string, lang: string, stdin: string): Promise<RunResult> {
+    switch (lang.toLowerCase()) {
       case 'python':
-        return this.executePython(code, input);
+        return this.runPython(source, stdin);
       case 'cpp':
-        return this.executeCpp(code, input);
+        return this.runCpp(source, stdin);
       case 'java':
-        return this.executeJava(code, input);
+        return this.runJava(source, stdin);
       default:
         return {
-          output: '',
-          error: 'Unsupported programming language',
-          executionTime: 0
+          result: '',
+          err: 'Unsupported language',
+          timeMs: 0
         };
     }
   }

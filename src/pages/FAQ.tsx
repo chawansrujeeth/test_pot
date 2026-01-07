@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const faqData = [
+const faqList = [
   {
     id: "how-it-works",
     question: "How does the code testing work? 🤔",
@@ -57,7 +57,7 @@ const faqData = [
   }
 ];
 
-const FAQ = () => {
+const FAQPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cartoon-blue-50 via-white to-cartoon-purple-50">
       <Navigation />
@@ -84,13 +84,13 @@ const FAQ = () => {
           </CardHeader>
           <CardContent>
             <Accordion type="single" collapsible className="w-full">
-              {faqData.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id} className="border-cartoon-blue-200">
+              {faqList.map((item) => (
+                <AccordionItem key={item.id} value={item.id} className="border-cartoon-blue-200">
                   <AccordionTrigger className="text-left hover:text-cartoon-blue-600 font-medium">
-                    {faq.question}
+                    {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-700 leading-relaxed">
-                    {faq.answer}
+                    {item.answer}
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -156,4 +156,4 @@ const FAQ = () => {
   );
 };
 
-export default FAQ;
+export default FAQPage;

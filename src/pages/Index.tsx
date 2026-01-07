@@ -6,7 +6,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Code2, TestTube, Save, BookOpen, HelpCircle } from "lucide-react";
 
-const Index = () => {
+// Main landing page for CodeTester
+const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cartoon-blue-50 via-white to-cartoon-purple-50">
       <Navigation />
@@ -135,4 +136,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default HomePage;

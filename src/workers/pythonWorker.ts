@@ -2,7 +2,7 @@ importScripts('https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js');
 
 let pyodide: any = null;
 
-async function initPyodide() {
+async function initializePyodide() {
   if (!pyodide) {
     pyodide = await loadPyodide();
     await pyodide.loadPackage('numpy');
@@ -14,7 +14,7 @@ self.onmessage = async (e) => {
   const { code, input } = e.data;
   
   try {
-    const pyodide = await initPyodide();
+  const pyodide = await initializePyodide();
     
     // Set up input redirection
     let output = '';
