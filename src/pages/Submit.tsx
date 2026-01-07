@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
-import CodeEditor from "@/components/CodeEditor";
+import AppNavigation from "@/components/Navigation";
+import AppFooter from "@/components/Footer";
+import EditorPanel from "@/components/CodeEditor";
 import TestCaseManager from "@/components/TestCaseManager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +32,8 @@ const Submit = () => {
     { id: "3", input: "0\n0", expectedOutput: "0" }
   ]);
 
-  const runTests = async (code: string, language: string) => {
+  // Run all test cases against the submitted code
+  const handleRunTests = async (code: string, language: string) => {
     setIsRunning(true);
     setTestResults([]);
 
@@ -41,7 +42,7 @@ const Submit = () => {
     for (let i = 0; i < testCases.length; i++) {
       const testCase = testCases[i];
       const result = await CodeExecutor.executeCode(code, language, testCase.input);
-      
+
       results.push({
         testCase: i + 1,
         input: testCase.input,
@@ -57,12 +58,13 @@ const Submit = () => {
     setIsRunning(false);
   };
 
-  const passedTests = testResults.filter(r => r.passed).length;
-  const totalTests = testResults.length;
+  // Calculate passed and total test cases
+  const passedTestCount = testResults.filter(r => r.passed).length;
+  const totalTestCount = testResults.length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cartoon-blue-50 via-white to-cartoon-purple-50">
-      <Navigation />
+  <AppNavigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -78,7 +80,7 @@ const Submit = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Code Editor */}
           <div className="lg:col-span-2">
-            <CodeEditor onTest={runTests} />
+            <EditorPanel onTest={handleRunTests} />
           </div>
 
           {/* Test Cases Management */}
@@ -98,17 +100,17 @@ const Submit = () => {
                     <span className="text-white text-sm">📊</span>
                   </div>
                   Test Results
-                  {totalTests > 0 && (
+                  {totalTestCount > 0 && (
                     <Badge 
                       className={`ml-auto ${
-                        passedTests === totalTests 
+                        passedTestCount === totalTestCount 
                           ? "bg-cartoon-green-500" 
-                          : passedTests > 0
+                          : passedTestCount > 0
                           ? "bg-cartoon-yellow-500"
                           : "bg-red-500"
                       }`}
                     >
-                      {passedTests}/{totalTests} Passed
+                      {passedTestCount}/{totalTestCount} Passed
                     </Badge>
                   )}
                 </CardTitle>
@@ -192,7 +194,7 @@ const Submit = () => {
         </div>
       </div>
 
-      <Footer />
+  <AppFooter />
     </div>
   );
 };
