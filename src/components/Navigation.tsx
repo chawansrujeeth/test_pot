@@ -5,7 +5,7 @@ import { Code2 } from "lucide-react";
 
 const Navigation = () => {
   return (
-    <nav className="bg-white/90 backdrop-blur-md border-b border-cartoon-blue-200 sticky top-0 z-50">
+      <nav className="bg-white/80 shadow-md py-4 px-6 flex items-center justify-between">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2 group">
@@ -18,18 +18,18 @@ const Navigation = () => {
           </Link>
           
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/submit" className="text-gray-700 hover:text-cartoon-blue-600 font-medium transition-colors">
-              Submit Code
-            </Link>
-            <Link to="/save" className="text-gray-700 hover:text-cartoon-blue-600 font-medium transition-colors">
-              Saved Code
-            </Link>
-            <Link to="/stories" className="text-gray-700 hover:text-cartoon-blue-600 font-medium transition-colors">
-              Our Stories
-            </Link>
-            <Link to="/faq" className="text-gray-700 hover:text-cartoon-blue-600 font-medium transition-colors">
-              FAQ
-            </Link>
+              <Link to="/submit" className="navbar-link hover:text-cartoon-blue-600 transition-colors">
+                Submit
+              </Link>
+              <Link to="/save" className="navbar-link hover:text-cartoon-blue-600 transition-colors">
+                Save
+              </Link>
+              <Link to="/stories" className="navbar-link hover:text-cartoon-blue-600 transition-colors">
+                Stories
+              </Link>
+              <Link to="/faq" className="navbar-link hover:text-cartoon-blue-600 transition-colors">
+                FAQ
+              </Link>
           </div>
           
           <Button 
@@ -44,4 +44,7 @@ const Navigation = () => {
   );
 };
 
-export default Navigation;
+ /**
+  * AppNavigation: Main navigation bar for the CodeTester app.
+  */
+ export default AppNavigation;

@@ -11,14 +11,18 @@ interface CodeEditorProps {
   onTest?: (code: string, language: string) => void;
 }
 
-const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
+/**
+ * EditorPanel: Main code editor component for writing, uploading, and testing code.
+ */
+const EditorPanel = ({ onSave, onTest }: CodeEditorProps) => {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
   const [codeName, setCodeName] = useState("");
   const [fileName, setFileName] = useState("");
   const { toast } = useToast();
 
-  const onFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle file upload and auto-detect language
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -46,7 +50,8 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
     reader.readAsText(file);
   };
 
-  const onTestClick = () => {
+  // Handle test button click
+  const handleTestClick = () => {
     if (!code.trim()) {
       toast({
         title: "No code to test! 🤔",
@@ -58,7 +63,8 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
   onTest?.(code, language);
   };
 
-  const onSaveClick = () => {
+  // Handle save button click
+  const handleSaveClick = () => {
     if (!code.trim()) {
       toast({
         title: "No code to save! 📝",
@@ -83,7 +89,7 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <Input type="file" accept=".py,.cpp,.cc,.cxx,.java" onChange={onFileUpload} />
+            <Input type="file" accept=".py,.cpp,.cc,.cxx,.java" onChange={handleFileUpload} />
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select language" />
@@ -106,10 +112,10 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
               placeholder="Write or upload your code here..."
             />
             <div className="flex gap-2">
-              <Button onClick={onTestClick} variant="default">
+              <Button onClick={handleTestClick} variant="default">
                 <Play className="w-4 h-4 mr-2" /> Test
               </Button>
-              <Button onClick={onSaveClick} variant="secondary">
+              <Button onClick={handleSaveClick} variant="secondary">
                 <Save className="w-4 h-4 mr-2" /> Save
               </Button>
             </div>
@@ -153,4 +159,4 @@ const CodeEditor = ({ onSave, onTest }: CodeEditorProps) => {
   );
 };
 
-export default CodeEditor;
+export default EditorPanel;
