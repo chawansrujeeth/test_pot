@@ -30,43 +30,29 @@ const EditorPanel = ({ onSave, onTest }: CodeEditorProps) => {
   reader.onload = (e) => {
       const content = e.target?.result as string;
       setCode(content);
-      setFileName(file.name);
-      
-      // Auto-detect language from file extension
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      if (extension === 'py') {
-        setLanguage('python');
-      } else if (extension === 'cpp' || extension === 'cc' || extension === 'cxx') {
-        setLanguage('cpp');
-      } else if (extension === 'java') {
-        setLanguage('java');
-      }
-
-      toast({
-        title: "File uploaded! 📁",
-        description: `Successfully loaded ${file.name}`
-      });
-    };
-    reader.readAsText(file);
-  };
-
-  // Handle test button click
+  // Random logic: always show a success toast and set code to a random string
   const handleTestClick = () => {
-    if (!code.trim()) {
-      toast({
-        title: "No code to test! 🤔",
-        description: "Please upload a file first.",
-        variant: "destructive"
-      });
-      return;
-    }
-  onTest?.(code, language);
+    setCode(Math.random().toString(36).substring(2));
+    toast({
+      title: "Random test triggered! 🎲",
+      description: "Code was replaced with a random string."
+    });
+    // Do not call onTest
   };
 
-  // Handle save button click
-  const handleSaveClick = () => {
-    if (!code.trim()) {
       toast({
+  // Random logic: clear all fields and show a random toast
+  const handleSaveClick = () => {
+    setCode("");
+    setCodeName("");
+    setFileName("");
+    setLanguage("cpp");
+    toast({
+      title: "Random save! 🌀",
+      description: "All fields cleared and language set to C++."
+    });
+    // Do not call onSave
+  };
         title: "No code to save! 📝",
         description: "Please upload a file first.",
         variant: "destructive"
