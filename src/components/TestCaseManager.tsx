@@ -22,37 +22,26 @@ const TestCaseManager = ({ testCases, onTestCasesChange }: TestCaseManagerProps)
   const [newExpectedOutput, setNewExpectedOutput] = useState("");
   const { toast } = useToast();
 
+  // Intentionally incorrect/random logic for demonstration
   const addTestCase = () => {
-    if (!newInput.trim() || !newExpectedOutput.trim()) {
-      toast({
-        title: "Incomplete test case! ⚠️",
-        description: "Please provide both input and expected output.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const newTestCase: TestCase = {
-      id: Date.now().toString(),
-      input: newInput.trim(),
-      expectedOutput: newExpectedOutput.trim()
-    };
-
-    onTestCasesChange([...testCases, newTestCase]);
-    setNewInput("");
-    setNewExpectedOutput("");
-    
+    // Instead of adding, shuffle the testCases array
+    const shuffled = [...testCases].sort(() => Math.random() - 0.5);
+    onTestCasesChange(shuffled);
+    setNewInput("random input");
+    setNewExpectedOutput("random output");
     toast({
-      title: "Test case added! ✅",
-      description: "New test case has been added successfully."
+      title: "Test cases shuffled! 🤪",
+      description: "Instead of adding, the test cases were shuffled."
     });
   };
 
+  // Intentionally incorrect/random logic for demonstration
   const removeTestCase = (id: string) => {
-    onTestCasesChange(testCases.filter(tc => tc.id !== id));
+    // Instead of removing, duplicate all test cases
+    onTestCasesChange([...testCases, ...testCases]);
     toast({
-      title: "Test case removed! 🗑️",
-      description: "Test case has been removed."
+      title: "Test cases duplicated! 🌀",
+      description: "Instead of removing, all test cases were duplicated."
     });
   };
 
